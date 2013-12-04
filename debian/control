@@ -1,8 +1,7 @@
 Source: sbsigntool
 Section: utils
 Priority: optional
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-XSBC-Original-Maintainer: Steve Langasek <vorlon@debian.org>
+Maintainer: Gaudenz Steinlin <gaudenz@debian.org>
 Standards-Version: 3.9.3
 Build-Depends: binutils-dev, debhelper (>= 9), libssl-dev, help2man, openssl, pkg-config, uuid-dev, gnu-efi, gcc-multilib, dh-autoreconf, automake1.11
 Vcs-Bzr: lp:ubuntu/sbsigntool
