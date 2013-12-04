@@ -4,7 +4,6 @@ Priority: optional
 Maintainer: Gaudenz Steinlin <gaudenz@debian.org>
 Standards-Version: 3.9.5
 Build-Depends: binutils-dev, debhelper (>= 9), libssl-dev, help2man, openssl, pkg-config, uuid-dev, gnu-efi, gcc-multilib, dh-autoreconf, automake1.11
-Vcs-Bzr: lp:ubuntu/sbsigntool
 
 Package: sbsigntool
 Architecture: any-amd64 any-i386
