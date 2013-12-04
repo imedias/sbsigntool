@@ -1,0 +1,78 @@
+sbsigntool (0.6-0ubuntu5) saucy; urgency=low
+
+  * debian/patches/ignore-certificate-expiries.patch: ignore certificate
+    expiries when verifying signatures.  Closes LP: #1234649.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Fri, 04 Oct 2013 01:43:03 +0000
+
+sbsigntool (0.6-0ubuntu4) saucy; urgency=low
+
+  * debian/patches/efi_arch_ia32.patch: Use AC_CANONICAL_HOST, not uname -m,
+    to determine target. Closes LP: #1066038.
+  * debian/patches/Align-signature-data-to-8-bytes.patch: Align signature
+    data to 8 bytes.  This matches the Microsoft signing implementation,
+    which enables us to use sbattach to verify the integrity of the binaries
+    returned by the SysDev signing service.
+  * debian/patches/update_checksums.patch: make sure we update the PE checksum
+    field as well, also needed for matching the Microsoft signing
+    implementation.
+  * debian/patches/fix-signature-padding.patch: fix calculation of the
+    size of our signature data, so that we don't write out extra zeroes
+    when we detach a signature.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Fri, 23 Aug 2013 21:07:17 -0700
+
+sbsigntool (0.6-0ubuntu3) saucy; urgency=low
+
+  * Build-depend on gcc-multilib to support building the test suite.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Mon, 17 Jun 2013 11:53:31 +0100
+
+sbsigntool (0.6-0ubuntu2) raring; urgency=low
+
+  * Mark sbsigntool Multi-Arch: foreign.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Tue, 08 Jan 2013 12:20:42 +0000
+
+sbsigntool (0.6-0ubuntu1) quantal; urgency=low
+
+  * New upstream release.
+    - Uses the new mount point for the efivars directory, for compatibility
+      with the pending upstream kernel patches and compatibility with what
+      mountall is doing.  LP: #1063061.
+    - Fixes sbverify verification of the pkcs7 bundles that Microsoft-signed
+      binaries deliver to us, enabling us to do build-time verification of
+      shim-signed.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 11 Oct 2012 17:24:56 -0700
+
+sbsigntool (0.4-0ubuntu2) quantal; urgency=low
+
+  * Fix FTBFS on i386 by defining EFI_ARCH to ia32 instead of uname.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Tue, 02 Oct 2012 07:44:59 -0600
+
+sbsigntool (0.4-0ubuntu1) quantal; urgency=low
+
+  * New upstream release.
+  * Add new uuid-dev and gnu-efi build dependancies.
+
+ -- Andy Whitcroft <apw@ubuntu.com>  Tue, 02 Oct 2012 10:15:17 +0100
+
+sbsigntool (0.3-0ubuntu2) quantal; urgency=low
+
+  * Only build on amd64 and i386 (LP: #1020771).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Mon, 01 Oct 2012 10:53:56 +0100
+
+sbsigntool (0.3-0ubuntu1) quantal; urgency=low
+
+  * New upstream release.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Sat, 30 Jun 2012 01:37:52 +0000
+
+sbsigntool (0.2-0ubuntu1) quantal; urgency=low
+
+  * Initial release.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 28 Jun 2012 01:47:06 +0000

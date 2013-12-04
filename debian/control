@@ -1,0 +1,17 @@
+Source: sbsigntool
+Section: utils
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Steve Langasek <vorlon@debian.org>
+Standards-Version: 3.9.3
+Build-Depends: binutils-dev, debhelper (>= 9), libssl-dev, help2man, openssl, pkg-config, uuid-dev, gnu-efi, gcc-multilib, dh-autoreconf, automake1.11
+Vcs-Bzr: lp:ubuntu/sbsigntool
+
+Package: sbsigntool
+Architecture: any-amd64 any-i386
+Multi-Arch: foreign
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: utility for signing and verifying files for UEFI Secure Boot
+ This package provides utilities that can be used for signing PE programs
+ for use with UEFI Secure Boot, and for verifying the signatures included
+ in the same.

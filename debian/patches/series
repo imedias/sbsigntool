@@ -1,0 +1,5 @@
+efi_arch_ia32.patch
+Align-signature-data-to-8-bytes.patch
+update_checksums.patch
+fix-signature-padding.patch
+ignore-certificate-expiries.patch

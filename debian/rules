@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+
+export AUTOMAKE=automake-1.11
+export ACLOCAL=aclocal-1.11
+
+%:
+	dh $@ --with=autoreconf
