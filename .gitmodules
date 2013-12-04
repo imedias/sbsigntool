@@ -1,3 +1,0 @@
-[submodule "lib/ccan.git"]
-	path = lib/ccan.git
-	url = git://git.ozlabs.org/~ccan/ccan
