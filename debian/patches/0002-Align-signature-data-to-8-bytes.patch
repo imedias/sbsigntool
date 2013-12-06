@@ -1,7 +1,6 @@
-From 8b6b7a9904881757254b92a928b95dfb8634605b Mon Sep 17 00:00:00 2001
 From: Steve Langasek <steve.langasek@canonical.com>
 Date: Fri, 12 Oct 2012 16:27:13 -0700
-Subject: [PATCH] Align signature data to 8 bytes
+Subject: Align signature data to 8 bytes
 
 Before appending the signature data to our binary, pad the file out to
 8-byte alignment.  This matches the Microsoft signing implementation, which
@@ -11,11 +10,11 @@ by the SysDev signing service.
  src/image.c | 2 ++
  1 file changed, 2 insertions(+)
 
-Index: sbsigntool-0.6/src/image.c
-===================================================================
---- sbsigntool-0.6.orig/src/image.c
-+++ sbsigntool-0.6/src/image.c
-@@ -425,6 +425,8 @@
+diff --git a/src/image.c b/src/image.c
+index cc55791..12c700d 100644
+--- a/src/image.c
++++ b/src/image.c
+@@ -425,6 +425,8 @@ reparse:
  	 * we've calculated during the pecoff parsing, so we need to redo that
  	 * too.
  	 */

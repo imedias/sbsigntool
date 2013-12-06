@@ -1,102 +1,23 @@
 From: Steve Langasek <steve.langasek@canonical.com>
+Date: Fri, 6 Dec 2013 14:15:35 +0100
+Subject: update_checksums
 
 Update the PE checksum field using the somewhat-underdocumented
 algorithm, so that we match the Microsoft implementation in our
 signature generation.
 
 Signed-off-by: Jeremy Kerr <jeremy.kerr@canonical.com>
-
 ---
- autogen.sh  |    2 -
- src/image.c |   59 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+), 1 deletion(-)
+ lib/ccan/ccan/endian/endian.h | 227 ++++++++++++++++++++++++++++++++++++++++++
+ src/image.c                   |  59 +++++++++++
+ 2 files changed, 286 insertions(+)
+ create mode 100644 lib/ccan/ccan/endian/endian.h
 
-Index: sbsigntool-0.6/src/image.c
-===================================================================
---- sbsigntool-0.6.orig/src/image.c
-+++ sbsigntool-0.6/src/image.c
-@@ -38,6 +38,7 @@
- #include <unistd.h>
- #include <string.h>
- 
-+#include <ccan/endian/endian.h>
- #include <ccan/talloc/talloc.h>
- #include <ccan/read_write_all/read_write_all.h>
- #include <ccan/build_assert/build_assert.h>
-@@ -129,6 +130,62 @@
- 	return 0;
- }
- 
-+static uint16_t csum_update_fold(uint16_t csum, uint16_t x)
-+{
-+	uint32_t new = csum + x;
-+	new = (new >> 16) + (new & 0xffff);
-+	return new;
-+}
-+
-+static uint16_t csum_bytes(uint16_t checksum, void *buf, size_t len)
-+{
-+	unsigned int i;
-+	uint16_t *p;
-+
-+	for (i = 0; i < len; i += sizeof(*p)) {
-+		p = buf + i;
-+		checksum = csum_update_fold(checksum, *p);
-+	}
-+
-+	return checksum;
-+}
-+
-+static void image_pecoff_update_checksum(struct image *image,
-+                                        struct cert_table_header *cert_table)
-+{
-+	bool is_signed = image->sigsize && image->sigbuf;
-+	uint32_t checksum;
-+
-+	/* We carefully only include the signature data in the checksum (and
-+	 * in the file length) if we're outputting the signature.  Otherwise,
-+	 * in case of signature removal, the signature data is in the buffer
-+	 * we read in (as indicated by image->size), but we do *not* want to
-+	 * checksum it.
-+	 *
-+	 * We also skip the 32-bits of checksum data in the PE/COFF header.
-+	 */
-+	checksum = csum_bytes(0, image->buf,
-+			(void *)image->checksum - (void *)image->buf);
-+	checksum = csum_bytes(checksum,
-+			image->checksum + 1,
-+			(void *)(image->buf + image->data_size) -
-+			(void *)(image->checksum + 1));
-+
-+	if (is_signed) {
-+		checksum = csum_bytes(checksum,
-+				cert_table, sizeof(*cert_table));
-+
-+		checksum = csum_bytes(checksum, image->sigbuf, image->sigsize);
-+	}
-+
-+	checksum += image->data_size;
-+
-+	if (is_signed)
-+		checksum += sizeof(*cert_table) + image->sigsize;
-+
-+	*(image->checksum) = cpu_to_le32(checksum);
-+}
-+
- static int image_pecoff_parse(struct image *image)
- {
- 	struct cert_table_header *cert_table;
-@@ -524,6 +581,8 @@
- 		image->data_dir_sigtable->size = 0;
- 	}
- 
-+	image_pecoff_update_checksum(image, &cert_table_header);
-+
- 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
- 	if (fd < 0) {
- 		perror("open");
+diff --git a/lib/ccan/ccan/endian/endian.h b/lib/ccan/ccan/endian/endian.h
+new file mode 100644
+index 0000000..5219111
 --- /dev/null
-+++ sbsigntool-0.6/lib/ccan/ccan/endian/endian.h
++++ b/lib/ccan/ccan/endian/endian.h
 @@ -0,0 +1,227 @@
 +/* Licensed under LGPLv2.1+ - see LICENSE file for details */
 +#ifndef CCAN_ENDIAN_H
@@ -325,3 +246,87 @@ Index: sbsigntool-0.6/src/image.c
 +}
 +
 +#endif /* CCAN_ENDIAN_H */
+diff --git a/src/image.c b/src/image.c
+index 12c700d..f3d4baa 100644
+--- a/src/image.c
++++ b/src/image.c
+@@ -38,6 +38,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ 
++#include <ccan/endian/endian.h>
+ #include <ccan/talloc/talloc.h>
+ #include <ccan/read_write_all/read_write_all.h>
+ #include <ccan/build_assert/build_assert.h>
+@@ -129,6 +130,62 @@ static int image_pecoff_parse_64(struct image *image)
+ 	return 0;
+ }
+ 
++static uint16_t csum_update_fold(uint16_t csum, uint16_t x)
++{
++	uint32_t new = csum + x;
++	new = (new >> 16) + (new & 0xffff);
++	return new;
++}
++
++static uint16_t csum_bytes(uint16_t checksum, void *buf, size_t len)
++{
++	unsigned int i;
++	uint16_t *p;
++
++	for (i = 0; i < len; i += sizeof(*p)) {
++		p = buf + i;
++		checksum = csum_update_fold(checksum, *p);
++	}
++
++	return checksum;
++}
++
++static void image_pecoff_update_checksum(struct image *image,
++                                        struct cert_table_header *cert_table)
++{
++	bool is_signed = image->sigsize && image->sigbuf;
++	uint32_t checksum;
++
++	/* We carefully only include the signature data in the checksum (and
++	 * in the file length) if we're outputting the signature.  Otherwise,
++	 * in case of signature removal, the signature data is in the buffer
++	 * we read in (as indicated by image->size), but we do *not* want to
++	 * checksum it.
++	 *
++	 * We also skip the 32-bits of checksum data in the PE/COFF header.
++	 */
++	checksum = csum_bytes(0, image->buf,
++			(void *)image->checksum - (void *)image->buf);
++	checksum = csum_bytes(checksum,
++			image->checksum + 1,
++			(void *)(image->buf + image->data_size) -
++			(void *)(image->checksum + 1));
++
++	if (is_signed) {
++		checksum = csum_bytes(checksum,
++				cert_table, sizeof(*cert_table));
++
++		checksum = csum_bytes(checksum, image->sigbuf, image->sigsize);
++	}
++
++	checksum += image->data_size;
++
++	if (is_signed)
++		checksum += sizeof(*cert_table) + image->sigsize;
++
++	*(image->checksum) = cpu_to_le32(checksum);
++}
++
+ static int image_pecoff_parse(struct image *image)
+ {
+ 	struct cert_table_header *cert_table;
+@@ -524,6 +581,8 @@ int image_write(struct image *image, const char *filename)
+ 		image->data_dir_sigtable->size = 0;
+ 	}
+ 
++	image_pecoff_update_checksum(image, &cert_table_header);
++
+ 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+ 	if (fd < 0) {
+ 		perror("open");

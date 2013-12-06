@@ -1,5 +1,5 @@
-efi_arch_ia32.patch
-Align-signature-data-to-8-bytes.patch
-update_checksums.patch
-fix-signature-padding.patch
-ignore-certificate-expiries.patch
+0001-Use-AC_CANONICAL_HOST-not-uname-m-to-determine-targe.patch
+0002-Align-signature-data-to-8-bytes.patch
+0003-update_checksums.patch
+0004-Fix-calculation-of-the-size-of-our-signature-data.patch
+0005-Ignore-certificate-expiries-when-verifying-signature.patch
