@@ -3,3 +3,4 @@
 0003-update_checksums.patch
 0004-Fix-calculation-of-the-size-of-our-signature-data.patch
 0005-Ignore-certificate-expiries-when-verifying-signature.patch
+0006-sbkeysync-add-corrected-efivars-magic.patch
