@@ -1,3 +1,13 @@
+sbsigntool (0.6-1~lernstick1) wheezy-lernstick; urgency=medium
+
+  * Build for wheezy-lernstick
+  * [291e] Change Maintainer to myself
+  * [d898] Update Standards-Version to 3.9.5, no changes
+  * [e66d] Remove Ubuntu Vcs-Bzr link
+  * [7b06] sbkeysync: add corrected efivars magic
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Thu, 20 Mar 2014 16:27:13 +0100
+
 sbsigntool (0.6-0ubuntu5) saucy; urgency=low
 
   * debian/patches/ignore-certificate-expiries.patch: ignore certificate
